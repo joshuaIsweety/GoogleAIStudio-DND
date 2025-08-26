@@ -1,35 +1,50 @@
-
 import React, { useEffect, useRef } from 'react';
 import LoadingSpinner from './LoadingSpinner.tsx';
+import { StorySegment } from '../types.ts';
 
 interface Props {
-  storyHistory: string[];
+  storySegments: StorySegment[];
   choices: string[];
   onChoice: (choice: string) => void;
   isLoading: boolean;
   error: string | null;
 }
 
-const GameScreen: React.FC<Props> = ({ storyHistory, choices, onChoice, isLoading, error }) => {
+const GameScreen: React.FC<Props> = ({ storySegments, choices, onChoice, isLoading, error }) => {
   const storyEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     storyEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [storyHistory]);
+  }, [storySegments]);
 
   return (
     <div className="flex flex-col h-[60vh] max-h-[700px]">
       <div className="flex-grow overflow-y-auto pr-4 -mr-4 mb-6 custom-scrollbar">
-        {storyHistory.map((part, index) => {
-          const isChoice = part.startsWith('>');
-          return (
-            <div key={index} className="animate-fade-in-slow mb-4">
-              {isChoice ? (
+        {storySegments.map((segment, index) => {
+          if (segment.isPlayerChoice) {
+            return (
+              <div key={index} className="animate-fade-in-slow my-6">
                 <p className="text-yellow-400 italic text-lg pl-4 border-l-2 border-yellow-700">
-                  {part.substring(1).trim()}
+                  {segment.story.substring(1).trim()}
                 </p>
+              </div>
+            );
+          }
+
+          return (
+            <div key={index} className="animate-fade-in-slow mb-6 space-y-4">
+              {segment.imageUrl ? (
+                <div className="relative rounded-lg overflow-hidden border border-gray-700 shadow-lg shadow-black/30 min-h-[200px] flex items-end aspect-video">
+                  <img src={segment.imageUrl} alt="遊戲場景" className="absolute top-0 left-0 w-full h-full object-cover z-0" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-10"></div>
+                  <div className="relative z-20 p-4">
+                    <p className="text-gray-200 leading-relaxed text-lg whitespace-pre-wrap">{segment.story}</p>
+                  </div>
+                </div>
               ) : (
-                <p className="text-gray-300 leading-relaxed text-lg whitespace-pre-wrap">{part}</p>
+                <div className="bg-gray-900/50 p-4 rounded-lg">
+                    <p className="text-gray-300 leading-relaxed text-lg whitespace-pre-wrap">{segment.story}</p>
+                </div>
               )}
             </div>
           );
@@ -42,7 +57,7 @@ const GameScreen: React.FC<Props> = ({ storyHistory, choices, onChoice, isLoadin
       {isLoading && (
         <div className="text-center p-4">
           <LoadingSpinner />
-          <p className="text-gray-400 mt-2">地下城主正在思考...</p>
+          <p className="text-gray-400 mt-2">地下城主正在思考並繪製場景...</p>
         </div>
       )}
 

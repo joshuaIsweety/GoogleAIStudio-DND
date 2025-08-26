@@ -1,4 +1,3 @@
-
 export enum CharacterClass {
   WARRIOR = '戰士',
   MAGE = '法師',
@@ -19,8 +18,17 @@ export enum GameState {
 
 export type StoryOutcome = 'continue' | 'victory' | 'game_over';
 
+export enum VictoryType {
+  BOSS_BATTLE = 'BOSS_BATTLE',
+  TREASURE_HUNT = 'TREASURE_HUNT',
+  EPIC_JOURNEY = 'EPIC_JOURNEY',
+}
+
 export interface StorySegment {
   story: string;
   choices: string[];
   outcome: StoryOutcome;
+  victoryType?: VictoryType;
+  imageUrl?: string;
+  isPlayerChoice?: boolean;
 }
